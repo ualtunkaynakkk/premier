@@ -54,15 +54,15 @@
         const { useState, useMemo } = React;
 
         const bms = [
-            { name: "Bora Dedeoğlu", target: 2988, actual: 237, hgo: 7.9 },
-            { name: "Fatih Sülün", target: 5512, actual: 276, hgo: 5.0 },
-            { name: "Mustafa Bulut", target: 2200, actual: 121, hgo: 5.5 },
-            { name: "Pınar Beyaz", target: 5228, actual: 256, hgo: 4.9 },
-            { name: "Seda Urgan", target: 4376, actual: 330, hgo: 7.5 },
-            { name: "Ümit Altunkaynak", target: 24868, actual: 1074, hgo: 4.3 }
+            { name: "Bora Dedeoğlu", target: 2988, actual: 3719, hgo: 124.5 },
+            { name: "Fatih Sülün", target: 5512, actual: 15875, hgo: 288.0 },
+            { name: "Mustafa Bulut", target: 2200, actual: 3012, hgo: 136.9 },
+            { name: "Pınar Beyaz", target: 5228, actual: 20547, hgo: 393.0 },
+            { name: "Seda Urgan", target: 4376, actual: 13497, hgo: 308.4 },
+            { name: "Ümit Altunkaynak", target: 24868, actual: 11342, hgo: 45.6 }
         ];
 
-        const summary = { target: 45172, actual: 2294, hgo: 5.1 };
+        const summary = { target: 45172, actual: 67992, hgo: 150.5 };
 
         const stores = [
             { bm: "Bora Dedeoğlu", store: "AMAS AMASYA PARK AVM", target: 76, actual: 18, hgo: 24 },
@@ -199,7 +199,10 @@
             { bm: "Ümit Altunkaynak", store: "VAN VANMALL AVM", target: 45, actual: 1, hgo: 2 }
         ];
 
-        const formatHgo = (hgo) => typeof hgo === 'number' ? hgo.toString().replace('.', ',') : hgo;
+        const formatHgo = (hgo) => {
+            if (typeof hgo !== 'number') return hgo;
+            return Number.isInteger(hgo) ? hgo.toString() : hgo.toFixed(1).replace('.', ',');
+        };
 
         const KpiCard = ({ title, value, icon, colorClass, delay }) => (
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center justify-between fade-in hover:shadow-md transition-shadow" style={{animationDelay: delay}}>
@@ -213,9 +216,9 @@
             </div>
         );
 
-        const ProgressBar = ({ value, max = 15 }) => {
+        const ProgressBar = ({ value, max = 400 }) => {
             const percentage = Math.min((value / max) * 100, 100);
-            const bgColor = value > 10 ? 'bg-penti-pink' : value > 5 ? 'bg-pink-400' : 'bg-gray-400';
+            const bgColor = value >= 100 ? 'bg-penti-pink' : value >= 50 ? 'bg-pink-400' : 'bg-gray-400';
             return (
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
                     <div className={`${bgColor} h-2.5 rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }}></div>
@@ -364,7 +367,7 @@
                                                     <td className="py-3 px-6 min-w-[150px]">
                                                         <div className="flex items-center gap-3">
                                                             <span className={`text-sm font-bold w-12 ${item.hgo === 0 ? 'text-gray-400' : 'text-penti-pink'}`}>%{formatHgo(item.hgo)}</span>
-                                                            <div className="flex-1"><ProgressBar value={item.hgo} max={20} /></div>
+                                                            <div className="flex-1"><ProgressBar value={item.hgo} max={50} /></div>
                                                         </div>
                                                     </td>
                                                 </tr>
