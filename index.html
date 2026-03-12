@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penti | PC Premier 3A2Ö</title>
+    
+    <!-- React & ReactDOM -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        penti: {
+                            pink: '#e20665',
+                            dark: '#222222',
+                            light: '#f8f9fa',
+                            pinkLight: '#fce6ef'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #f3f4f6; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useMemo } = React;
+
+        const bms = [
+            { name: "Bora Dedeoğlu", target: 2988, actual: 237, hgo: 7.9 },
+            { name: "Fatih Sülün", target: 5512, actual: 276, hgo: 5.0 },
+            { name: "Mustafa Bulut", target: 2200, actual: 121, hgo: 5.5 },
+            { name: "Pınar Beyaz", target: 5228, actual: 256, hgo: 4.9 },
+            { name: "Seda Urgan", target: 4376, actual: 330, hgo: 7.5 },
+            { name: "Ümit Altunkaynak", target: 24868, actual: 1074, hgo: 4.3 }
+        ];
+
+        const summary = { target: 45172, actual: 2294, hgo: 5.1 };
+
+        const stores = [
+            { bm: "Bora Dedeoğlu", store: "AMAS AMASYA PARK AVM", target: 76, actual: 18, hgo: 24 },
+            { bm: "Bora Dedeoğlu", store: "CORU AHL AVM", target: 180, actual: 9, hgo: 5 },
+            { bm: "Bora Dedeoğlu", store: "CORU GAZI CD", target: 56, actual: 5, hgo: 9 },
+            { bm: "Bora Dedeoğlu", store: "GIRE GAZI CADDESI", target: 172, actual: 24, hgo: 14 },
+            { bm: "Bora Dedeoğlu", store: "GIRE İNÖNÜ CD", target: 240, actual: 5, hgo: 2 },
+            { bm: "Bora Dedeoğlu", store: "ORDU FATSA", target: 80, actual: 7, hgo: 9 },
+            { bm: "Bora Dedeoğlu", store: "ORDU NOVADA AVM", target: 132, actual: 4, hgo: 3 },
+            { bm: "Bora Dedeoğlu", store: "ORDU SIRRIPASA CD", target: 192, actual: 6, hgo: 3 },
+            { bm: "Bora Dedeoğlu", store: "ORDU UNYE UNIPORT AVM", target: 76, actual: 6, hgo: 8 },
+            { bm: "Bora Dedeoğlu", store: "SAMS BAFRA CELIKPARK AVM", target: 48, actual: 0, hgo: 0 },
+            { bm: "Bora Dedeoğlu", store: "SAMS BULVAR", target: 56, actual: 17, hgo: 30 },
+            { bm: "Bora Dedeoğlu", store: "SAMS CIFTLIK CD 2", target: 45, actual: 0, hgo: 0 },
+            { bm: "Bora Dedeoğlu", store: "SAMS CITYMALL AVM", target: 600, actual: 43, hgo: 7 },
+            { bm: "Bora Dedeoğlu", store: "SAMS LOVELET", target: 45, actual: 3, hgo: 7 },
+            { bm: "Bora Dedeoğlu", store: "SAMS PIAZZA", target: 636, actual: 54, hgo: 8 },
+            { bm: "Bora Dedeoğlu", store: "SAMS YESILYURT", target: 340, actual: 36, hgo: 11 },
+            { bm: "Bora Dedeoğlu", store: "SINO SAKARYA CD", target: 104, actual: 0, hgo: 0 },
+            { bm: "Fatih Sülün", store: "BALI BANDIRMA LIMAN", target: 116, actual: 7, hgo: 6 },
+            { bm: "Fatih Sülün", store: "BILE BOZUYUK SARAR", target: 80, actual: 0, hgo: 0 },
+            { bm: "Fatih Sülün", store: "BURS AHMET TANER KISLALI CD", target: 784, actual: 26, hgo: 3 },
+            { bm: "Fatih Sülün", store: "BURS ANATOLIUM", target: 192, actual: 6, hgo: 3 },
+            { bm: "Fatih Sülün", store: "BURS AS OUTLET AVM", target: 48, actual: 3, hgo: 6 },
+            { bm: "Fatih Sülün", store: "BURS ATABULVARI CD", target: 360, actual: 22, hgo: 6 },
+            { bm: "Fatih Sülün", store: "BURS DOWNTOWN AVM", target: 60, actual: 3, hgo: 5 },
+            { bm: "Fatih Sülün", store: "BURS GORUKLE CAD", target: 328, actual: 14, hgo: 4 },
+            { bm: "Fatih Sülün", store: "BURS INEGOL", target: 204, actual: 1, hgo: 0 },
+            { bm: "Fatih Sülün", store: "BURS KENT MEYDANI", target: 132, actual: 10, hgo: 8 },
+            { bm: "Fatih Sülün", store: "BURS KORUPARK", target: 1568, actual: 60, hgo: 4 },
+            { bm: "Fatih Sülün", store: "BURS OKSIJEN SHOPINN AVM", target: 52, actual: 6, hgo: 12 },
+            { bm: "Fatih Sülün", store: "BURS OZDILEKPARK AVM", target: 364, actual: 24, hgo: 7 },
+            { bm: "Fatih Sülün", store: "BURS PARKUR AVM", target: 52, actual: 23, hgo: 44 },
+            { bm: "Fatih Sülün", store: "BURS SUR YAPI MARKA AVM", target: 968, actual: 41, hgo: 4 },
+            { bm: "Fatih Sülün", store: "BURS ZAFER PLAZA", target: 204, actual: 30, hgo: 15 },
+            { bm: "Mustafa Bulut", store: "ADIY ADIYAMAN PARK AVM", target: 48, actual: 0, hgo: 0 },
+            { bm: "Mustafa Bulut", store: "BATM BATMAN PARK", target: 52, actual: 1, hgo: 2 },
+            { bm: "Mustafa Bulut", store: "BATM PETROL CITY AVM", target: 84, actual: 8, hgo: 10 },
+            { bm: "Mustafa Bulut", store: "BING KALIUM AVM", target: 45, actual: 0, hgo: 0 },
+            { bm: "Mustafa Bulut", store: "DIYA 75 METRE CD", target: 116, actual: 4, hgo: 3 },
+            { bm: "Mustafa Bulut", store: "DIYA CEYLANPARK AVM", target: 208, actual: 2, hgo: 1 },
+            { bm: "Mustafa Bulut", store: "DIYA FORUM AVM", target: 256, actual: 13, hgo: 5 },
+            { bm: "Mustafa Bulut", store: "ELAZ ELAZIG PARK23", target: 45, actual: 0, hgo: 0 },
+            { bm: "Mustafa Bulut", store: "ELAZ ELYSIUM AVM", target: 180, actual: 8, hgo: 4 },
+            { bm: "Mustafa Bulut", store: "GAZI G.ANTEP FR", target: 84, actual: 3, hgo: 4 },
+            { bm: "Mustafa Bulut", store: "GAZI GAZIMUHTAR", target: 45, actual: 3, hgo: 7 },
+            { bm: "Mustafa Bulut", store: "GAZI M1 OUTLET", target: 45, actual: 0, hgo: 0 },
+            { bm: "Mustafa Bulut", store: "GAZI PRIME MALL", target: 500, actual: 15, hgo: 3 },
+            { bm: "Mustafa Bulut", store: "GAZI SANKOPARK", target: 208, actual: 23, hgo: 11 },
+            { bm: "Mustafa Bulut", store: "KAHR PIAZZA", target: 124, actual: 15, hgo: 12 },
+            { bm: "Mustafa Bulut", store: "MALA MALATYAPARK", target: 168, actual: 5, hgo: 3 },
+            { bm: "Mustafa Bulut", store: "MARD MARDIAN MALL", target: 60, actual: 0, hgo: 0 },
+            { bm: "Mustafa Bulut", store: "MARD MOVAPARK", target: 45, actual: 9, hgo: 20 },
+            { bm: "Mustafa Bulut", store: "SANL URFA NOVADA AVM", target: 45, actual: 4, hgo: 9 },
+            { bm: "Mustafa Bulut", store: "SANL URFA PIAZZA", target: 112, actual: 7, hgo: 6 },
+            { bm: "Mustafa Bulut", store: "SANL URFACITY", target: 45, actual: 0, hgo: 0 },
+            { bm: "Mustafa Bulut", store: "SIIR SIIRT PARK AVM", target: 45, actual: 1, hgo: 2 },
+            { bm: "Mustafa Bulut", store: "SIRN CIZRE PARK AVM", target: 45, actual: 0, hgo: 0 },
+            { bm: "Pınar Beyaz", store: "ADAN 01 BURDA AVM", target: 150, actual: 9, hgo: 6 },
+            { bm: "Pınar Beyaz", store: "ADAN BARAJ YOLU CAD", target: 176, actual: 1, hgo: 1 },
+            { bm: "Pınar Beyaz", store: "ADAN CAKMAK CD", target: 80, actual: 2, hgo: 3 },
+            { bm: "Pınar Beyaz", store: "ADAN KENAN EVREN BLV", target: 112, actual: 9, hgo: 8 },
+            { bm: "Pınar Beyaz", store: "ADAN M1 AVM", target: 650, actual: 36, hgo: 6 },
+            { bm: "Pınar Beyaz", store: "ADAN OPTIMUM", target: 816, actual: 42, hgo: 5 },
+            { bm: "Pınar Beyaz", store: "ADAN TURGUT OZAL CD", target: 250, actual: 8, hgo: 3 },
+            { bm: "Pınar Beyaz", store: "ADAN TURKMENBASI CD", target: 416, actual: 37, hgo: 9 },
+            { bm: "Pınar Beyaz", store: "HATA ANTAKYA YUZUNCU YIL AVM", target: 72, actual: 3, hgo: 4 },
+            { bm: "Pınar Beyaz", store: "HATA DORTYOL CD", target: 45, actual: 0, hgo: 0 },
+            { bm: "Pınar Beyaz", store: "HATA ISK PRIMEMALL", target: 252, actual: 18, hgo: 7 },
+            { bm: "Pınar Beyaz", store: "HATA ISKENDERUN PARK FORBES AV", target: 680, actual: 26, hgo: 4 },
+            { bm: "Pınar Beyaz", store: "MERS MERSIN CFR", target: 152, actual: 0, hgo: 0 },
+            { bm: "Pınar Beyaz", store: "MERS MERSIN FR", target: 730, actual: 36, hgo: 5 },
+            { bm: "Pınar Beyaz", store: "MERS NOVADA ERDEMLI AVM", target: 45, actual: 0, hgo: 0 },
+            { bm: "Pınar Beyaz", store: "MERS SAYAPARK AVM", target: 312, actual: 11, hgo: 4 },
+            { bm: "Pınar Beyaz", store: "MERS SİLİFKE CD", target: 116, actual: 4, hgo: 3 },
+            { bm: "Pınar Beyaz", store: "MERS TARSU", target: 144, actual: 11, hgo: 8 },
+            { bm: "Pınar Beyaz", store: "OSMA 328 AVM", target: 120, actual: 3, hgo: 3 },
+            { bm: "Seda Urgan", store: "CANA 17 BURDA AVM", target: 1044, actual: 69, hgo: 7 },
+            { bm: "Seda Urgan", store: "CANA CANAKKALE CARSI CD", target: 624, actual: 42, hgo: 7 },
+            { bm: "Seda Urgan", store: "CANA CANAKKALE KIP", target: 64, actual: 0, hgo: 0 },
+            { bm: "Seda Urgan", store: "EDIR ERASTA AVM", target: 308, actual: 32, hgo: 10 },
+            { bm: "Seda Urgan", store: "EDIR KESAN KIPA AVM", target: 45, actual: 7, hgo: 16 },
+            { bm: "Seda Urgan", store: "EDIR MARGI", target: 216, actual: 13, hgo: 6 },
+            { bm: "Seda Urgan", store: "EDIR SARACLAR CD", target: 56, actual: 4, hgo: 7 },
+            { bm: "Seda Urgan", store: "ISTT SILIVRI CD", target: 96, actual: 17, hgo: 18 },
+            { bm: "Seda Urgan", store: "ISTT SILIVRI KIP", target: 84, actual: 5, hgo: 6 },
+            { bm: "Seda Urgan", store: "ISTT SILIVRI MAXI", target: 64, actual: 6, hgo: 9 },
+            { bm: "Seda Urgan", store: "KIRK 39 BURDA AVM", target: 124, actual: 1, hgo: 1 },
+            { bm: "Seda Urgan", store: "KIRK KIRKLARELI CD", target: 212, actual: 13, hgo: 6 },
+            { bm: "Seda Urgan", store: "KIRK LULEBURGAZ ISTANBUL CD", target: 112, actual: 21, hgo: 19 },
+            { bm: "Seda Urgan", store: "TEKI CERKEZKOY KIPA", target: 288, actual: 12, hgo: 4 },
+            { bm: "Seda Urgan", store: "TEKI CORLU OMURTAK CD", target: 88, actual: 6, hgo: 7 },
+            { bm: "Seda Urgan", store: "TEKI ORION CORLU", target: 492, actual: 49, hgo: 10 },
+            { bm: "Seda Urgan", store: "TEKI TEKIRA", target: 504, actual: 33, hgo: 7 },
+            { bm: "Ümit Altunkaynak", store: "ISTT AKBATI", target: 1040, actual: 57, hgo: 5 },
+            { bm: "Ümit Altunkaynak", store: "ISTT AKMERKEZ", target: 1000, actual: 34, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT ATIRUS AVM", target: 52, actual: 6, hgo: 12 },
+            { bm: "Ümit Altunkaynak", store: "ISTT AVENUA AVM", target: 152, actual: 19, hgo: 13 },
+            { bm: "Ümit Altunkaynak", store: "ISTT AVLU 34 AVM", target: 45, actual: 3, hgo: 7 },
+            { bm: "Ümit Altunkaynak", store: "ISTT BESIKTAS MEYDAN", target: 200, actual: 13, hgo: 7 },
+            { bm: "Ümit Altunkaynak", store: "ISTT BEYLIKDUZU MGR", target: 404, actual: 25, hgo: 6 },
+            { bm: "Ümit Altunkaynak", store: "ISTT CENNET CD 2", target: 268, actual: 32, hgo: 12 },
+            { bm: "Ümit Altunkaynak", store: "ISTT CEVAHIR", target: 2396, actual: 88, hgo: 4 },
+            { bm: "Ümit Altunkaynak", store: "ISTT ESENYURT CITY CENTER AVM", target: 80, actual: 3, hgo: 4 },
+            { bm: "Ümit Altunkaynak", store: "ISTT GALATASARAY", target: 948, actual: 30, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT GOKTURK IST CD2", target: 684, actual: 23, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT HALASKARGAZI CD", target: 212, actual: 7, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT HAVALIMANI IC HATLAR", target: 88, actual: 2, hgo: 2 },
+            { bm: "Ümit Altunkaynak", store: "ISTT HISTORIA", target: 112, actual: 3, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT ISTANBUL TERSANE AVM", target: 108, actual: 0, hgo: 0 },
+            { bm: "Ümit Altunkaynak", store: "ISTT ISTIKLAL AVM", target: 116, actual: 14, hgo: 12 },
+            { bm: "Ümit Altunkaynak", store: "ISTT ISTINYEPARK", target: 2216, actual: 69, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT KAGITHANE AXIS AVM", target: 148, actual: 11, hgo: 7 },
+            { bm: "Ümit Altunkaynak", store: "ISTT KANYON AVM", target: 636, actual: 48, hgo: 8 },
+            { bm: "Ümit Altunkaynak", store: "ISTT MARMARA CAD", target: 544, actual: 30, hgo: 6 },
+            { bm: "Ümit Altunkaynak", store: "ISTT MARMARAPARK", target: 1416, actual: 53, hgo: 4 },
+            { bm: "Ümit Altunkaynak", store: "ISTT MIMAROBA DIA MARE CD", target: 312, actual: 34, hgo: 11 },
+            { bm: "Ümit Altunkaynak", store: "ISTT NISANTASI CD", target: 2264, actual: 82, hgo: 4 },
+            { bm: "Ümit Altunkaynak", store: "ISTT NISANTASI CITYS AVM", target: 340, actual: 24, hgo: 7 },
+            { bm: "Ümit Altunkaynak", store: "ISTT ORTABAHCE CD", target: 676, actual: 47, hgo: 7 },
+            { bm: "Ümit Altunkaynak", store: "ISTT ORTAKÖY CD", target: 112, actual: 5, hgo: 4 },
+            { bm: "Ümit Altunkaynak", store: "ISTT OZDILEK AVM", target: 692, actual: 33, hgo: 5 },
+            { bm: "Ümit Altunkaynak", store: "ISTT PELICAN", target: 596, actual: 16, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT PERLAVISTA AVM", target: 356, actual: 11, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT SARIYER CD", target: 228, actual: 5, hgo: 2 },
+            { bm: "Ümit Altunkaynak", store: "ISTT SISLI CD", target: 152, actual: 5, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT TAKSIM CADDE", target: 904, actual: 28, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "ISTT TORIUM", target: 284, actual: 7, hgo: 2 },
+            { bm: "Ümit Altunkaynak", store: "ISTT TRUMP TOWERS", target: 468, actual: 33, hgo: 7 },
+            { bm: "Ümit Altunkaynak", store: "ISTT VADI ISTANBUL AVM", target: 1772, actual: 81, hgo: 5 },
+            { bm: "Ümit Altunkaynak", store: "ISTT VALIKONAGI CD", target: 440, actual: 16, hgo: 4 },
+            { bm: "Ümit Altunkaynak", store: "ISTT ZORLU AVM", target: 2352, actual: 71, hgo: 3 },
+            { bm: "Ümit Altunkaynak", store: "VAN VAN AVM", target: 100, actual: 5, hgo: 5 },
+            { bm: "Ümit Altunkaynak", store: "VAN VANMALL AVM", target: 45, actual: 1, hgo: 2 }
+        ];
+
+        const formatHgo = (hgo) => typeof hgo === 'number' ? hgo.toString().replace('.', ',') : hgo;
+
+        const KpiCard = ({ title, value, icon, colorClass, delay }) => (
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex items-center justify-between fade-in hover:shadow-md transition-shadow" style={{animationDelay: delay}}>
+                <div>
+                    <p className="text-gray-500 text-sm font-medium mb-1">{title}</p>
+                    <h3 className="text-3xl font-bold text-gray-800">{value}</h3>
+                </div>
+                <div className={`w-14 h-14 rounded-full flex items-center justify-center ${colorClass}`}>
+                    <i className={`fas ${icon} text-xl`}></i>
+                </div>
+            </div>
+        );
+
+        const ProgressBar = ({ value, max = 15 }) => {
+            const percentage = Math.min((value / max) * 100, 100);
+            const bgColor = value > 10 ? 'bg-penti-pink' : value > 5 ? 'bg-pink-400' : 'bg-gray-400';
+            return (
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                    <div className={`${bgColor} h-2.5 rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }}></div>
+                </div>
+            );
+        };
+
+        const PodiumCard = ({ bm, rank, isSelected, onClick }) => {
+            if (!bm) return null;
+            const isFirst = rank === 1;
+            const colorConfig = {
+                1: { border: 'border-yellow-400', text: 'text-yellow-600', bg: 'bg-gradient-to-t from-yellow-50 to-white', h: 'h-48 sm:h-56', rankStr: '1.' },
+                2: { border: 'border-slate-300', text: 'text-slate-600', bg: 'bg-gradient-to-t from-slate-50 to-white', h: 'h-40 sm:h-48', rankStr: '2.' },
+                3: { border: 'border-orange-400', text: 'text-orange-600', bg: 'bg-gradient-to-t from-orange-50 to-white', h: 'h-32 sm:h-40', rankStr: '3.' }
+            }[rank];
+            return (
+                <div
+                    onClick={() => onClick(bm.name)}
+                    className={`relative flex flex-col items-center justify-start pt-6 sm:pt-8 px-2 pb-2 rounded-t-xl shadow-sm cursor-pointer transition-all duration-300
+                        ${isSelected ? 'ring-2 ring-penti-pink shadow-lg scale-105 z-10' : 'hover:shadow-md hover:scale-105 z-0'}
+                        border-t-4 ${colorConfig.border} ${colorConfig.bg} w-[30%] max-w-[200px] ${colorConfig.h}`}
+                >
+                    {isFirst && <i className="fas fa-crown text-yellow-400 text-3xl sm:text-4xl absolute -top-5 sm:-top-6 drop-shadow-md animate-bounce"></i>}
+                    <h3 className="font-bold text-gray-800 text-center tracking-tight leading-tight text-xs sm:text-sm mb-1 truncate w-full px-1">{bm.name}</h3>
+                    <div className={`text-xl sm:text-3xl font-black ${colorConfig.text} mb-1 sm:mb-2`}>%{formatHgo(bm.hgo)}</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500 font-semibold uppercase tracking-wider text-center truncate w-full px-1">
+                        Satış: {new Intl.NumberFormat('tr-TR').format(bm.actual)}
+                    </div>
+                    <div className={`absolute bottom-2 w-full text-center font-black text-4xl sm:text-6xl opacity-10 ${colorConfig.text} pointer-events-none`}>{rank}</div>
+                </div>
+            );
+        };
+
+        const OtherBMCard = ({ bm, rank, isSelected, onClick }) => (
+            <div
+                onClick={() => onClick(bm.name)}
+                className={`flex items-center justify-between p-4 bg-white rounded-xl shadow-sm cursor-pointer transition-all duration-200 border-l-4
+                    ${isSelected ? 'border-penti-pink bg-penti-pinkLight ring-1 ring-penti-pink/20' : 'border-gray-200 hover:border-gray-300 hover:shadow-md'}`}
+            >
+                <div className="flex items-center gap-4">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-500 text-sm shadow-inner">{rank}</div>
+                    <div>
+                        <h4 className="font-bold text-gray-800 text-sm">{bm.name}</h4>
+                        <p className="text-xs text-gray-500 mt-0.5">Satış: {new Intl.NumberFormat('tr-TR').format(bm.actual)}</p>
+                    </div>
+                </div>
+                <div className="text-right">
+                    <div className="text-lg font-bold text-gray-700">%{formatHgo(bm.hgo)}</div>
+                    <div className="text-[10px] text-gray-400 uppercase font-semibold">HGO</div>
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [selectedBM, setSelectedBM] = useState(null);
+            const [searchTerm, setSearchTerm] = useState("");
+            const sortedBMs = useMemo(() => [...bms].sort((a,b) => b.hgo - a.hgo), []);
+            const top3 = [sortedBMs[1], sortedBMs[0], sortedBMs[2]];
+            const otherBMs = sortedBMs.slice(3);
+            const filteredStores = useMemo(() => {
+                let result = stores;
+                if (selectedBM) result = result.filter(s => s.bm === selectedBM);
+                if (searchTerm) result = result.filter(s => s.store.toLowerCase().includes(searchTerm.toLowerCase()));
+                return result.sort((a, b) => b.hgo - a.hgo);
+            }, [selectedBM, searchTerm]);
+            const formatNum = (num) => new Intl.NumberFormat('tr-TR').format(num);
+            return (
+                <div className="min-h-screen pb-12">
+                    <header className="bg-white shadow-sm sticky top-0 z-10">
+                        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+                            <div className="flex items-center gap-3">
+                                <div className="bg-penti-pink text-white w-10 h-10 rounded-lg flex items-center justify-center font-bold text-xl shadow-md">P</div>
+                                <div>
+                                    <h1 className="text-xl font-bold text-gray-800 leading-tight">PC Premier 3A2Ö</h1>
+                                    <p className="text-sm text-gray-500">Bölge & Mağaza Performans Paneli</p>
+                                </div>
+                            </div>
+                            <div className="hidden sm:block text-right">
+                                <span className="text-xs font-semibold bg-penti-pinkLight text-penti-pink px-3 py-1 rounded-full">
+                                    <i className="fas fa-circle-dot mr-1 text-[10px]"></i> 1. Operasyon HGO %
+                                </span>
+                            </div>
+                        </div>
+                    </header>
+                    <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <KpiCard title="Toplam Hedef" value={formatNum(summary.target)} icon="fa-bullseye" colorClass="bg-blue-100 text-blue-600" delay="0s" />
+                            <KpiCard title="Gerçekleşen Satış" value={formatNum(summary.actual)} icon="fa-shopping-bag" colorClass="bg-green-100 text-green-600" delay="0.1s" />
+                            <KpiCard title="Genel HGO %" value={`%${formatHgo(summary.hgo)}`} icon="fa-chart-line" colorClass="bg-penti-pinkLight text-penti-pink" delay="0.2s" />
+                        </div>
+                        <div className="mb-10 fade-in" style={{animationDelay: '0.3s'}}>
+                            <div className="flex justify-between items-end mb-4">
+                                <div>
+                                    <h2 className="text-lg font-bold text-gray-800">Bölge Müdürleri Performansı</h2>
+                                    <p className="text-sm text-gray-500">Detaylarını görmek istediğin bölge müdürüne tıkla.</p>
+                                </div>
+                                {selectedBM && (
+                                    <button onClick={() => setSelectedBM(null)} className="text-sm text-penti-pink hover:text-penti-dark font-medium transition-colors bg-pink-50 px-3 py-1.5 rounded-lg">
+                                        <i className="fas fa-times mr-1"></i> Filtreyi Temizle
+                                    </button>
+                                )}
+                            </div>
+                            <div className="flex flex-row justify-center items-end gap-2 sm:gap-6 mb-8 pt-6 sm:pt-10 px-2 h-52 sm:h-64 border-b-2 border-gray-200">
+                                <PodiumCard rank={2} bm={top3[0]} isSelected={selectedBM === top3[0]?.name} onClick={(name) => setSelectedBM(name === selectedBM ? null : name)} />
+                                <PodiumCard rank={1} bm={top3[1]} isSelected={selectedBM === top3[1]?.name} onClick={(name) => setSelectedBM(name === selectedBM ? null : name)} />
+                                <PodiumCard rank={3} bm={top3[2]} isSelected={selectedBM === top3[2]?.name} onClick={(name) => setSelectedBM(name === selectedBM ? null : name)} />
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                {otherBMs.map((bm, idx) => (
+                                    <OtherBMCard key={bm.name} rank={idx + 4} bm={bm} isSelected={selectedBM === bm.name} onClick={(name) => setSelectedBM(name === selectedBM ? null : name)} />
+                                ))}
+                            </div>
+                        </div>
+                        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden fade-in" style={{animationDelay: '0.4s'}}>
+                            <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-center gap-4 bg-gray-50/50">
+                                <h2 className="text-lg font-bold text-gray-800">{selectedBM ? `${selectedBM} Mağazaları` : 'Tüm Mağazalar'}</h2>
+                                <div className="relative w-full sm:w-72">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        <i className="fas fa-search text-gray-400 text-sm"></i>
+                                    </div>
+                                    <input type="text" placeholder="Mağaza adı ara..." className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-penti-pink/50 focus:border-penti-pink transition-colors" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                                </div>
+                            </div>
+                            <div className="overflow-x-auto custom-scrollbar max-h-[500px]">
+                                <table className="w-full text-left border-collapse">
+                                    <thead className="bg-gray-50 sticky top-0 z-10 shadow-sm">
+                                        <tr>
+                                            <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Mağaza Adı</th>
+                                            <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">Bölge Müdürü</th>
+                                            <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Hedef</th>
+                                            <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider text-right">Gerçekleşen</th>
+                                            <th className="py-4 px-6 text-xs font-semibold text-gray-500 uppercase tracking-wider">HGO %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {filteredStores.length > 0 ? (
+                                            filteredStores.map((item, index) => (
+                                                <tr key={index} className="hover:bg-gray-50/80 transition-colors">
+                                                    <td className="py-3 px-6 text-sm font-medium text-gray-800">
+                                                        {item.store}
+                                                        {item.hgo > 15 && <i className="fas fa-fire ml-2 text-orange-500" title="Yüksek Performans!"></i>}
+                                                    </td>
+                                                    <td className="py-3 px-6 text-sm text-gray-500">{item.bm}</td>
+                                                    <td className="py-3 px-6 text-sm text-gray-600 text-right font-medium">{formatNum(item.target)}</td>
+                                                    <td className="py-3 px-6 text-sm text-gray-800 text-right font-bold">{formatNum(item.actual)}</td>
+                                                    <td className="py-3 px-6 min-w-[150px]">
+                                                        <div className="flex items-center gap-3">
+                                                            <span className={`text-sm font-bold w-12 ${item.hgo === 0 ? 'text-gray-400' : 'text-penti-pink'}`}>%{formatHgo(item.hgo)}</span>
+                                                            <div className="flex-1"><ProgressBar value={item.hgo} max={20} /></div>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        ) : (
+                                            <tr>
+                                                <td colSpan="5" className="py-12 text-center text-gray-500">
+                                                    <i className="fas fa-box-open text-3xl mb-3 text-gray-300"></i>
+                                                    <p>Aradığın kritere uygun mağaza bulunamadı.</p>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </main>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
